@@ -1,45 +1,76 @@
-import { RequestHandler } from 'express';
+import bcryptjs from 'bcryptjs'
+import { RequestHandler } from 'express'
+import User from '../models/user'
+import { UserInterface } from '../types/user'
 
-const getUser: RequestHandler<{},{},{},{nombre: string, apellidos: string, api_key: string}> = async( req, res ) => {
+const getUser: RequestHandler<{}, {}, {}, {limit: string, from: string}> = async (req, res) => {
+  const { limit = 5, from = 0 } = req.query
 
-  const query = req.query;
+  const [total, users] = await Promise.all([
+    User.countDocuments({ state: true }),
+    User.find({ state: true })
+      .skip(Number(from))
+      .limit(Number(limit))
+  ])
 
   res.json({
-    msg: 'GET - Api',
-    ...query
-  });
+    total,
+    users
+  })
 }
 
-const postUser: RequestHandler<{},{},{name: string, age: number}> = async(req, res) => {
+const postUser: RequestHandler<{}, {}, UserInterface> = async (req, res) => {
+  const { name, mail, password, role } = req.body
+  const user = new User({ name, mail, password, role })
 
-  const body = req.body;
+  // Encriptar contraseña
+  const salt = bcryptjs.genSaltSync()
+  user.password = bcryptjs.hashSync(password, salt)
+
+  // Guardar en DB
+  await user.save()
 
   res.json({
     msg: 'POST - Api',
-    body
-  });
+    user
+  })
 }
 
-const putUser: RequestHandler<{id: string},{}> = async( req, res ) => {
+const putUser: RequestHandler<{id: string}> = async (req, res) => {
+  const { id } = req.params
+  const { password, google, ...rest } = req.body
 
-  const { id } = req.params;
+  // TODO validar contra base de datos
+  if (password) {
+    // Encriptar contraseña
+    const salt = bcryptjs.genSaltSync()
+    rest.password = bcryptjs.hashSync(password, salt)
+  }
 
-  res.json({
-    msg: 'PUT - Api',
-    id
-  });
+  const user = await User.findByIdAndUpdate(id, rest)
+
+  res.json(user)
 }
 
-const patchUser: RequestHandler = async( req, res ) => {
+const patchUser: RequestHandler = async (_, res) => {
   res.json({
     msg: 'PATCH - Api'
-  });
+  })
 }
 
-const deleteUser: RequestHandler = async( req, res ) => {
+const deleteUser: RequestHandler<{id: string}> = async (req, res) => {
+  const { id } = req.params
+
+  // Eliminación física
+  // const user = await User.findByIdAndDelete(id)
+
+  // Eliminación lógica
+  const user = await User.findByIdAndUpdate(id, { state: false })
+
   res.json({
-    msg: 'DELETE - Api'
-  });
+    msg: 'DELETE - Api',
+    user
+  })
 }
 
 export {
@@ -47,5 +78,5 @@ export {
   postUser,
   putUser,
   patchUser,
-  deleteUser,
+  deleteUser
 }
