@@ -1,5 +1,5 @@
 import bcryptjs from 'bcryptjs'
-import { RequestHandler } from 'express'
+import { RequestHandler, Response, Request } from 'express'
 import User from '../models/user'
 import { UserInterface } from '../types/user'
 
@@ -58,19 +58,11 @@ const patchUser: RequestHandler = async (_, res) => {
   })
 }
 
-const deleteUser: RequestHandler<{id: string}> = async (req, res) => {
+const deleteUser = async (req: Request, res: Response) => {
   const { id } = req.params
-
-  // Eliminación física
-  // const user = await User.findByIdAndDelete(id)
-
-  // Eliminación lógica
   const user = await User.findByIdAndUpdate(id, { state: false })
 
-  res.json({
-    msg: 'DELETE - Api',
-    user
-  })
+  res.json(user)
 }
 
 export {

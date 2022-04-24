@@ -2,14 +2,20 @@ import express from 'express'
 import cors from 'cors'
 
 import dbConnection from '../database/config'
+
+import authRouter from '../routes/auth'
 import userRouter from '../routes/user'
+import categoryRouter from '../routes/category'
 
 export default class Server {
   constructor (
     private readonly app = express(),
     private readonly port = process.env.PORT!,
-    private readonly userPath = '/api/user'
-
+    private readonly paths = {
+      auth: '/api/auth',
+      user: '/api/user',
+      category: '/api/category'
+    }
   ) {
     this.connectDB()
 
@@ -34,7 +40,9 @@ export default class Server {
   }
 
   routes (): void {
-    this.app.use(this.userPath, userRouter)
+    this.app.use(this.paths.auth, authRouter)
+    this.app.use(this.paths.user, userRouter)
+    this.app.use(this.paths.category, categoryRouter)
   }
 
   listen (): void {

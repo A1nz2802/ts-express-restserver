@@ -1,5 +1,9 @@
-import { Router as routerExpress } from 'express'
+import { Router } from 'express'
 import { body, check } from 'express-validator'
+
+import { validateFields, validateJWT, hasRole } from '../middlewares/index'
+import { existMail, userExistsById, isValidRole } from '../helpers/dbValidators'
+
 import {
   getUser,
   postUser,
@@ -7,10 +11,8 @@ import {
   patchUser,
   deleteUser
 } from '../controllers/user'
-import { existMail, userExistsById, isValidRole } from '../helpers/dbValidators'
-import { validateFields } from '../middlewares/validateFields'
 
-const router = routerExpress()
+const router = Router()
 
 router.get('/', [
   validateFields
@@ -36,6 +38,9 @@ router.post('/', [
 router.patch('/', patchUser)
 
 router.delete('/:id', [
+  validateJWT,
+  // isAdminRole,
+  hasRole('ADMIN_ROLE', 'RANDOM_ROLE'),
   check('id', 'Invalid ID').isMongoId(),
   check('id').custom(userExistsById),
   validateFields
