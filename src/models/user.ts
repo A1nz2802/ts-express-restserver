@@ -20,8 +20,8 @@ const UserSchema = new Schema<UserInterface>({
   },
   role: {
     type: String,
-    required: [true, 'Role is required'],
-    enum: ['ADMIN_ROLE', 'USER_ROLE']
+    enum: ['ADMIN_ROLE', 'USER_ROLE'],
+    default: 'USER_ROLE'
   },
   state: {
     type: Boolean,

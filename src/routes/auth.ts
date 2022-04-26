@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { body } from 'express-validator'
-import { login } from '../controllers/auth'
+import { googleSignIn, login } from '../controllers/auth'
 
 import { validateFields } from '../middlewares/validateFields'
 
@@ -11,5 +11,10 @@ router.post('/login', [
   body('password', 'Password is required').not().isEmpty(),
   validateFields
 ], login)
+
+router.post('/google', [
+  body('googleToken', 'Google token is required').not().isEmpty(),
+  validateFields
+], googleSignIn)
 
 export default router
