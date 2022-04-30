@@ -3,9 +3,13 @@ import cors from 'cors'
 
 import dbConnection from '../database/config'
 
-import authRouter from '../routes/auth'
-import userRouter from '../routes/user'
-import categoryRouter from '../routes/category'
+import {
+  authRouter,
+  userRouter,
+  categoryRouter,
+  productRouter,
+  searchRouter
+} from '../routes'
 
 export default class Server {
   constructor (
@@ -14,7 +18,9 @@ export default class Server {
     private readonly paths = {
       auth: '/api/auth',
       user: '/api/user',
-      category: '/api/category'
+      category: '/api/category',
+      product: '/api/product',
+      search: '/api/search'
     }
   ) {
     this.connectDB()
@@ -43,6 +49,8 @@ export default class Server {
     this.app.use(this.paths.auth, authRouter)
     this.app.use(this.paths.user, userRouter)
     this.app.use(this.paths.category, categoryRouter)
+    this.app.use(this.paths.product, productRouter)
+    this.app.use(this.paths.search, searchRouter)
   }
 
   listen (): void {

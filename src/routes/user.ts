@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { body, check } from 'express-validator'
+import { body, check, param } from 'express-validator'
 
 import { validateFields, validateJWT, hasRole } from '../middlewares/index'
 import { existMail, userExistsById, isValidRole } from '../helpers/dbValidators'
@@ -19,8 +19,8 @@ router.get('/', [
 ], getUser)
 
 router.put('/:id', [
-  check('id', 'Invalid ID').isMongoId(),
-  check('id').custom(userExistsById),
+  param('id', 'Invalid ID').isMongoId(),
+  param('id').custom(userExistsById),
   check('role').custom(isValidRole),
   validateFields
 ], putUser)
@@ -41,8 +41,8 @@ router.delete('/:id', [
   validateJWT,
   // isAdminRole,
   hasRole('ADMIN_ROLE', 'RANDOM_ROLE'),
-  check('id', 'Invalid ID').isMongoId(),
-  check('id').custom(userExistsById),
+  param('id', 'Invalid ID').isMongoId(),
+  param('id').custom(userExistsById),
   validateFields
 ], deleteUser)
 

@@ -1,6 +1,6 @@
-import Role from '../models/role'
-import User from '../models/user'
+import { Role, User, Category, Product } from '../models'
 
+// Validar si existe el rol
 const isValidRole = async (role: string = '') => {
   const existRole = await Role.findOne({ role })
   if (!existRole) {
@@ -17,6 +17,7 @@ const existMail = async (mail: string = '') => {
   }
 }
 
+// Verificar si existe el usuario por ID
 const userExistsById = async (id: string) => {
   const userDB = await User.findById(id)
 
@@ -25,8 +26,26 @@ const userExistsById = async (id: string) => {
   }
 }
 
+// Verificar si existe la categoria por ID
+const categoryExistsById = async (id: string) => {
+  const categoryDB = await Category.findById(id)
+
+  if (!categoryDB) {
+    throw new Error(`${id} doesn't exist`)
+  }
+}
+
+const productExistsById = async (id: string) => {
+  const productDB = await Product.findById(id)
+
+  if (!productDB) {
+    throw new Error(`${id} doesn't exist`)
+  }
+}
 export {
   isValidRole,
   existMail,
-  userExistsById
+  userExistsById,
+  categoryExistsById,
+  productExistsById
 }
