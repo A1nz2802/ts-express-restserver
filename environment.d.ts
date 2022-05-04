@@ -7,6 +7,7 @@ declare global {
       NODE_ENV: 'production' | 'development'
       GOOGLE_CLIENT_ID: string
       GOOGLE_SECRET_ID: string
+      CLOUDINARY_URL: string
     }
   }
 }

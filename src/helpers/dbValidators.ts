@@ -35,6 +35,7 @@ const categoryExistsById = async (id: string) => {
   }
 }
 
+// Verificar si existe producto por ID
 const productExistsById = async (id: string) => {
   const productDB = await Product.findById(id)
 
@@ -42,10 +43,26 @@ const productExistsById = async (id: string) => {
     throw new Error(`${id} doesn't exist`)
   }
 }
+
+/**
+ * Verificar si la coleccion obtenida de la
+  req.param existe en la/s coleccion/es especificadas
+  por el middleware
+ */
+const allowedCollections = (collection = '', collections ?: string[]) => {
+  const areCollections = collections?.includes(collection)
+
+  if (!areCollections) {
+    throw new Error(`Collection ${collection} is not allowed. Allowed Collections: ${collections}`)
+  }
+
+  return true
+}
 export {
   isValidRole,
   existMail,
   userExistsById,
   categoryExistsById,
-  productExistsById
+  productExistsById,
+  allowedCollections
 }

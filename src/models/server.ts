@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from 'cors'
+import fileUpload from 'express-fileupload'
 
 import dbConnection from '../database/config'
 
@@ -8,7 +9,8 @@ import {
   userRouter,
   categoryRouter,
   productRouter,
-  searchRouter
+  searchRouter,
+  uploadRouter
 } from '../routes'
 
 export default class Server {
@@ -20,7 +22,8 @@ export default class Server {
       user: '/api/user',
       category: '/api/category',
       product: '/api/product',
-      search: '/api/search'
+      search: '/api/search',
+      upload: '/api/upload'
     }
   ) {
     this.connectDB()
@@ -43,6 +46,13 @@ export default class Server {
 
     // Directorio público a servir
     this.app.use(express.static('src/public'))
+
+    // Carga de archivos
+    this.app.use(fileUpload({
+      useTempFiles: true,
+      tempFileDir: '/tmp/',
+      createParentPath: true
+    }))
   }
 
   routes (): void {
@@ -51,6 +61,7 @@ export default class Server {
     this.app.use(this.paths.category, categoryRouter)
     this.app.use(this.paths.product, productRouter)
     this.app.use(this.paths.search, searchRouter)
+    this.app.use(this.paths.upload, uploadRouter)
   }
 
   listen (): void {

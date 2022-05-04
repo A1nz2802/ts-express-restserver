@@ -10,4 +10,5 @@ export interface ProductInterface extends Document {
   category: CategoryInterface,
   description: string,
   available: Boolean,
+  img: string,
 }
